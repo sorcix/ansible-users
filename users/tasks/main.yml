@@ -1,0 +1,55 @@
+---
+
+- name: "enforce permissions on /home directory"
+  file:
+    path: "/home"
+    owner: "root"
+    group: "root"
+    mode: 0711
+    state: directory
+
+- name: "update root user"
+  user:
+    name: "root"
+    password: "{{ users_root_password }}"
+    uid: 0
+    state: present
+
+- name: "enforce permissions on /root directory"
+  file:
+    path: "/root"
+    owner: "root"
+    group: "root"
+    mode: 0700
+    state: directory
+
+- name: "create primary groups"
+  group:
+    name: "{{ item.value.group | default(item.key) }}"
+  with_dict: "{{ users }}"
+
+- name: "create users"
+  user:
+    name: "{{ item.key }}"
+    uid: "{{ item.value.id | default(omit) }}"
+    state: present
+    group: "{{ item.value.group | default(item.key) }}"
+    shell: "{{ item.value.shell | default(users_default_shell) }}"
+    home: "/home/{{ item.key }}"
+    generate_ssh_key: yes
+    update_password: always
+    createhome: yes
+    password: "{{ item.value.password | default(users_default_password) }}"
+    ssh_key_bits: 4096
+    ssh_key_comment: "{{ item.key }}@{{ ansible_host }}"
+    ssh_key_type: rsa
+  with_dict: "{{ users }}"
+
+- name: "enforce permissions on home directories"
+  file:
+    path: "/home/{{ item.key }}"
+    owner: "{{ item.key }}"
+    group: "{{ item.value.group | default(item.key) }}"
+    mode: 0700
+    state: directory
+  with_dict: "{{ users }}"

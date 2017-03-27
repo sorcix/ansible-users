@@ -1,0 +1,29 @@
+---
+
+- name: "enforce permissions on /home directory"
+  file:
+    path: "/home"
+    owner: "root"
+    group: "root"
+    mode: 0711
+    state: directory
+
+- name: "update root user"
+  user:
+    name: "root"
+    password: "{{ root_password }}"
+    uid: 0
+    state: present
+
+- name: "enforce permissions on /root directory"
+  file:
+    path: "/root"
+    owner: "root"
+    group: "root"
+    mode: 0700
+    state: directory
+
+- include: "user.yml"
+  with_items: "{{ users | default([]) }}"
+  loop_control:
+    loop_var: user

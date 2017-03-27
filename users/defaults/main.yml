@@ -1,0 +1,7 @@
+---
+
+users: {}
+
+users_default_password: "!"
+users_root_password: "{{ users_default_password }}"
+users_default_shell: "/bin/bash"
