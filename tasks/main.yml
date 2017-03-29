@@ -5,15 +5,15 @@
     path: "/home"
     owner: "root"
     group: "root"
-    mode: 0711
-    state: directory
+    mode: 0755
+    state: "directory"
 
 - name: "update root user"
   user:
     name: "root"
-    password: "{{ root_password }}"
+    password: "{{ users_root_password }}"
     uid: 0
-    state: present
+    state: "present"
 
 - name: "enforce permissions on /root directory"
   file:
@@ -21,9 +21,36 @@
     owner: "root"
     group: "root"
     mode: 0700
-    state: directory
+    state: "directory"
 
-- include: "user.yml"
-  with_items: "{{ users | default([]) }}"
-  loop_control:
-    loop_var: user
+- name: "create primary groups"
+  group:
+    name: "{{ item.value.group | default(item.key) }}"
+  with_dict: "{{ users }}"
+
+- name: "create users"
+  user:
+    name: "{{ item.key }}"
+    uid: "{{ item.value.id | default(omit) }}"
+    state: "present"
+    group: "{{ item.value.group | default(item.key) }}"
+    shell: "{{ item.value.shell | default(users_default_shell) }}"
+    generate_ssh_key: "yes"
+    update_password: "always"
+    password: "{{ item.value.password | default(users_default_password) }}"
+    ssh_key_bits: "{{ users_key_bits }}"
+    ssh_key_comment: "{{ item.key }}@{{ fqdn }}"
+    ssh_key_type: "{{ users_key_type }}"
+  with_dict: "{{ users }}"
+
+- name: "enforce permissions on home directories"
+  file:
+    path: "/home/{{ item.key}}"
+    owner: "{{ item.key }}"
+    group: "{{ item.value.group | default(item.key) }}"
+    mode: 0700
+    state: "directory"
+  with_dict: "{{ users }}"
+
+- include: sudo.yml
+  when: users_manage_sudo

@@ -1,5 +1,9 @@
 ---
 
-root_password: "!"
-
 users: {}
+users_root_password: "!"
+users_default_password: "!"
+users_default_shell: "/bin/bash"
+users_key_bits: "4096"
+users_key_type: "rsa"
+users_manage_sudo: true

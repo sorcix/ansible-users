@@ -1,0 +1,11 @@
+# {{ ansible_managed }}
+
+Defaults env_reset
+
+root ALL=(ALL) ALL
+
+{% for name, user in users.iteritems() -%}
+{% if user.sudo is defined and user.sudo -%}
+{{ name }} ALL=NOPASSWD: ALL
+{% endif -%}
+{% endfor -%}
