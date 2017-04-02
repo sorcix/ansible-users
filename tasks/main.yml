@@ -27,6 +27,7 @@
   group:
     name: "{{ item.value.group | default(item.key) }}"
   with_dict: "{{ users }}"
+  when: "item.key != 'root'"
 
 - name: "create users"
   user:
@@ -42,6 +43,7 @@
     ssh_key_comment: "{{ item.key }}@{{ fqdn }}"
     ssh_key_type: "{{ users_key_type }}"
   with_dict: "{{ users }}"
+  when: "item.key != 'root'"
 
 - name: "enforce permissions on home directories"
   file:
@@ -51,6 +53,7 @@
     mode: 0700
     state: "directory"
   with_dict: "{{ users }}"
+  when: "item.key != 'root'"
 
 - include: sudo.yml
   when: users_manage_sudo
