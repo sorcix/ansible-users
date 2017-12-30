@@ -55,5 +55,32 @@
   with_dict: "{{ users }}"
   when: "item.key != 'root'"
 
+- name: "limits - number of open files"
+  pam_limits:
+    domain: "{{ item.key }}"
+    limit_type: "-"
+    limit_item: "nofile"
+    value: "{{ item.value.limit_nofile | default(users_default_limit_nofile) }}"
+  with_dict: "{{ users }}"
+  when: "item.key != 'root'"
+
+- name: "limits - number of logins"
+  pam_limits:
+    domain: "{{ item.key }}"
+    limit_type: "-"
+    limit_item: "maxlogins"
+    value: "{{ item.value.limit_maxlogins | default(users_default_limit_maxlogins) }}"
+  with_dict: "{{ users }}"
+  when: "item.key != 'root'"
+
+- name: "limits - number of processes"
+  pam_limits:
+    domain: "{{ item.key }}"
+    limit_type: "-"
+    limit_item: "nproc"
+    value: "{{ item.value.limit_nproc | default(users_default_limit_nproc) }}"
+  with_dict: "{{ users }}"
+  when: "item.key != 'root'"
+
 - include: sudo.yml
   when: users_manage_sudo
