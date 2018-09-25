@@ -8,6 +8,6 @@ users_key_bits: "4096"
 users_key_type: "rsa"
 users_manage_sudo: true
 
-users_default_limit_nproc: 10
-users_default_limit_maxlogins: 2
-users_default_limit_nofile: 250
+users_default_limit_nproc: 50
+users_default_limit_maxlogins: 10
+users_default_limit_nofile: 800
