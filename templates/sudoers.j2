@@ -4,7 +4,7 @@ Defaults env_reset
 
 root ALL=(ALL) ALL
 
-{% for name, user in users.iteritems() -%}
+{% for name, user in users.items() -%}
 {% if user.sudo is defined and user.sudo -%}
 {{ name }} ALL=NOPASSWD: ALL
 {% endif -%}
