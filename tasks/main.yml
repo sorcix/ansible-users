@@ -82,5 +82,5 @@
   with_dict: "{{ users }}"
   when: "item.key != 'root'"
 
-- include: sudo.yml
+- include_tasks: sudo.yml
   when: users_manage_sudo
